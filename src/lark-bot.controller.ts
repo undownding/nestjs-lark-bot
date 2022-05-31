@@ -6,7 +6,7 @@ export class LarkBotController {
   constructor(private readonly appService: LarkBotService) {}
 
   @Get()
-  getHello(): string {
+  async getHello(): Promise<string> {
     return this.appService.getHello()
   }
 }
