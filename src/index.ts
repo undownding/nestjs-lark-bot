@@ -1,12 +1,5 @@
-import {LarkBotModule} from './lark-bot.module'
-import {LarkBotService} from './lark-bot.service'
-import {Options} from './lark-bot.dto'
-import {LARK_BOT, LARK_OPTIONS} from './lark-bot.constants'
-
-export default {
-  LarkBotModule,
-  LarkBotService,
-  Options,
-  LARK_BOT,
-  LARK_OPTIONS,
-}
+export {LarkBotModule} from './lark-bot.module'
+export {LarkBotService} from './lark-bot.service'
+export {Options} from './lark-bot.dto'
+export {LARK_BOT, LARK_OPTIONS} from './lark-bot.constants'
+export * as Dto from './lark-bot.dto'
