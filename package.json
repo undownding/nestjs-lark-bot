@@ -1,10 +1,27 @@
 {
   "name": "nestjs-lark-bot",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "version": "0.0.3",
+  "description": "Feishu bot for nestjs",
+  "author": "undownding",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/undownding/nestjs-lark-bot",
+  "bugs": {
+    "url": "https://github.com/undownding/nestjs-lark-bot/issues"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/lark-bot.module.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/undownding/nestjs-lark-bot"
+  },
+  "keywords": [
+    "nestjs",
+    "bot",
+    "lark",
+    "feishu"
+  ],
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -23,6 +40,7 @@
   "dependencies": {
     "@nestjs/axios": "^0.0.8",
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^2.0.1",
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "reflect-metadata": "^0.1.13",

@@ -10,5 +10,5 @@ export class Options {
   debug?: boolean
   appId: string
   appSecret: string
-  appVerificationToken: string
+  appVerificationToken?: string
 }
