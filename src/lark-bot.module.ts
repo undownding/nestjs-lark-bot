@@ -1,31 +1,32 @@
 import {DynamicModule, Module, Type} from '@nestjs/common'
 import {LarkBotService} from './lark-bot.service'
-import {LARK_BOT} from './lark-bot.constants'
-import {LarkBotCli} from './lark-bot.cli'
+import { LARK_BOT, LARK_OPTIONS } from "./lark-bot.constants";
 import {ConfigModule, ConfigService} from '@nestjs/config'
+import {Options} from './lark-bot.dto'
 
 @Module({})
 export class LarkBotModule {
-  static register<T extends LarkBotCli>(cliType: Type<T>, cliFactory: (ConfigService) => T): DynamicModule {
+  static register<T extends LarkBotService>(botService: Type<T>, options: Options): DynamicModule {
     return {
       module: LarkBotModule,
       imports: [
         ConfigModule,
-        cliType,
+        botService,
       ],
       providers: [
-        LarkBotService,
         {
-          inject: [ConfigService],
+          provide: LARK_OPTIONS,
+          useValue: options,
+        },
+        {
           provide: LARK_BOT,
-          useFactory: cliFactory,
+          useClass: botService,
         },
       ],
       exports: [
-        LarkBotService,
         {
           provide: LARK_BOT,
-          useExisting: cliType,
+          useExisting: botService,
         },
       ],
     }

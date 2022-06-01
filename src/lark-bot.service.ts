@@ -1,35 +1,29 @@
 import {Inject, Injectable, Logger} from '@nestjs/common'
-import {LarkBotCli} from './lark-bot.cli'
-import {LARK_BOT} from './lark-bot.constants'
 import {HttpService} from '@nestjs/axios'
 import UserResponseDto, {UserIdType} from './user.dto'
-import {ResourceType} from './lark-bot.dto'
+import {BotEventDto, Options, ResourceType} from './lark-bot.dto'
+import {LARK_OPTIONS} from './lark-bot.constants'
 
 interface ITokenResponse {
   code: number
   tenant_access_token: string
 }
 
-@Injectable()
-export class LarkBotService {
-  @Inject(LARK_BOT)
-  private readonly larkCli: LarkBotCli
+export abstract class LarkBotService {
+  @Inject(LARK_OPTIONS)
+  readonly options: Options
 
   private readonly httpService: HttpService
 
-  async getHello(): Promise<string> {
-    return 'Hello World!'
-  }
-
   async getTenantAccessToken(): Promise<string> {
-    if (this.larkCli.options.debug) {
+    if (this.options.debug) {
       Logger.log('getTenantAccessToken')
     }
     const response = await this.httpService.post<ITokenResponse>(
       'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/',
       {
-        app_id: this.larkCli.options.appId,
-        app_secret: this.larkCli.options.appSecret,
+        app_id: this.options.appId,
+        app_secret: this.options.appSecret,
       }
     ).toPromise()
       .catch((e) => Logger.error(e))
@@ -41,7 +35,7 @@ export class LarkBotService {
       return ''
     }
 
-    if (this.larkCli.options.debug) {
+    if (this.options.debug) {
       Logger.log(`get tenant_access_token success, token = ${body.tenant_access_token}`)
     }
     return body.tenant_access_token ?? ''
@@ -75,4 +69,6 @@ export class LarkBotService {
     })
       .then((response) => response.data)
   }
+
+  abstract onMessage(message: BotEventDto): void
 }

@@ -1,6 +1,13 @@
 import 'reflect-metadata'
 import {Type} from 'class-transformer'
 
+export class Options {
+  debug?: boolean
+  appId: string
+  appSecret: string
+  appVerificationToken?: string
+}
+
 class Header {
   public event_id?: string
   public token?: string
