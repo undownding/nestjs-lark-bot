@@ -1,4 +1,4 @@
-import {Inject, Injectable, Logger} from '@nestjs/common'
+import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import {HttpService} from '@nestjs/axios'
 import UserResponseDto, {UserIdType} from './user.dto'
 import {BotEventDto, Options, ResourceType} from './lark-bot.dto'
@@ -10,7 +10,7 @@ interface ITokenResponse {
 }
 
 export abstract class LarkBotService {
-  @Inject(LARK_OPTIONS)
+  @Inject(forwardRef(() => LARK_OPTIONS))
   readonly options: Options
 
   private readonly httpService: HttpService
