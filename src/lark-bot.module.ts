@@ -21,7 +21,10 @@ export class LarkBotModule {
           useFactory: cliFactory,
         },
       ],
-      exports: [LarkBotService],
+      exports: [
+        LarkBotService,
+        cliType,
+      ],
     }
   }
 }

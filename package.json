@@ -1,6 +1,6 @@
 {
   "name": "nestjs-lark-bot",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Feishu bot for nestjs",
   "author": "undownding",
   "license": "Apache-2.0",
@@ -11,7 +11,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/lark-bot.module.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/undownding/nestjs-lark-bot"
