@@ -59,7 +59,7 @@ export class LarkBotService {
     ).toPromise().then((response) => response.data)
   }
 
-  private async getMessageResource(
+  public async getMessageResource(
     messageId: string,
     fileKey: string,
     token: string,

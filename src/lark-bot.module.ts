@@ -23,7 +23,10 @@ export class LarkBotModule {
       ],
       exports: [
         LarkBotService,
-        cliType,
+        {
+          provide: LARK_BOT,
+          useExisting: cliType,
+        },
       ],
     }
   }
