@@ -1,6 +1,6 @@
 {
   "name": "nestjs-lark-bot",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Feishu bot for nestjs",
   "author": "undownding",
   "license": "Apache-2.0",

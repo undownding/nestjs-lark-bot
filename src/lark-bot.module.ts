@@ -1,7 +1,7 @@
 import {DynamicModule, Module, Type} from '@nestjs/common'
 import {LarkBotService} from './lark-bot.service'
-import { LARK_BOT, LARK_OPTIONS } from "./lark-bot.constants";
-import {ConfigModule, ConfigService} from '@nestjs/config'
+import {LARK_BOT, LARK_OPTIONS} from './lark-bot.constants'
+import {ConfigModule} from '@nestjs/config'
 import {Options} from './lark-bot.dto'
 
 @Module({})
@@ -27,6 +27,10 @@ export class LarkBotModule {
         {
           provide: LARK_BOT,
           useExisting: botService,
+        },
+        {
+          provide: LARK_OPTIONS,
+          useValue: options,
         },
       ],
     }
