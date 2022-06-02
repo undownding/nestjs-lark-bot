@@ -1,73 +1,70 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+## 飞书/Lark 机器人开发框架 for NestJS
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+### 安装
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+在 NestJS 项目下执行以下命令安装：
 
-## Description
+```shell
+npm install -g nestjs-lark-bot
+```
+### 使用
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+在需要调用飞书业务的 Module 中声明一个类继承于 LarkBotService（注意：不要加 `@Injectable()` ）
 
-## Installation
+```typescript
+import {Logger} from '@nestjs/common'
+import {BotEventDto, LarkBotService} from 'nestjs-lark-bot'
 
-```bash
-$ npm install
+export class BotService extends LarkBotService {
+  async onMessage(message: BotEventDto): Promise<void> {
+    Logger.log(JSON.stringify(message))
+  }
+}
 ```
 
-## Running the app
+于该业务的 `.module.ts` 中引入:
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```typescript
+@Module({
+  imports: [
+    LarkBotModule.register(BotService, {
+      debug: true, // 可选，默认 false
+      appId: 'foo',
+      appSecret: 'bar',
+      appVerificationToken: 'baz', // 暂未支持
+      endpoint: Domain.FeiShu, // 可选，默认飞书
+    })
+  ],
+  ...
+})
 ```
 
-## Test
+也可通过注入 `ConfigModule` 从环境变量/配置文件中获取配置，如：
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```typescript
+@Module({
+  imports: [
+    LarkBotModule.registerFactory(BotService, {
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        appId: configService.get('LARK_APP_ID', 'foooo'),
+        appSecret: configService.get('LARK_APP_SECRET', 'bar'),
+      }),
+    }),
+  ],
+  ...
+})
 ```
 
-## Support
+`LarkBotService` 提供了一些基础方法，如 `getTenantAccessToken()`, `getUserById()` 等。其他需要功能且未实现的 api，请参考 源码中的`LarkBotService.ts` 调用 `apiRequest<T>()` 方法实现。
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 部署
 
-## Stay in touch
+部署 NestJS 项目到公网服务器（略）；
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+在飞书开放平台的应用管理中，事件订阅中设置请求网址为项目的公网地址，并添加"接收消息 v2.0事件"。
 
-## License
+![](bot_deploy.png)
 
-Nest is [MIT licensed](LICENSE).
+用户发送到机器人的消息会由 `LarkBotService` 实现类中的 `onMessage` 方法处理，可以在 `onMessage` 中调用 `apiRequest<T>()` 方法调用飞书业务接口。

@@ -83,5 +83,5 @@ export abstract class LarkBotService {
     ).toPromise().then((response) => response.data)
   }
 
-  abstract onMessage(message: BotEventDto): void
+  abstract onMessage(message: BotEventDto): unknown
 }

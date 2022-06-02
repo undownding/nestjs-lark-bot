@@ -1,7 +1,8 @@
-import { CacheModule, DynamicModule, Module, Type } from "@nestjs/common";
+import {CacheModule, DynamicModule, Module, Type} from '@nestjs/common'
 import {LarkBotService} from './lark-bot.service'
 import {LARK_BOT, LARK_OPTIONS} from './lark-bot.constants'
 import {Options} from './lark-bot.dto'
+import {LarkBotController} from './lark-bot.controller'
 
 export class OptionsProvider {
   imports?: Array<any>
@@ -14,6 +15,7 @@ export class LarkBotModule {
   static register<T extends LarkBotService>(botService: Type<T>, options: Options): DynamicModule {
     return {
       module: LarkBotModule,
+      controllers: [LarkBotController],
       providers: [
         {
           provide: LARK_OPTIONS,
@@ -37,10 +39,13 @@ export class LarkBotModule {
     }
   }
 
-  static registerAsync<T extends LarkBotService>(botService: Type<T>, optionsProvider: OptionsProvider): DynamicModule {
+  static registerFactory<T extends LarkBotService>(
+    botService: Type<T>, optionsProvider: OptionsProvider
+  ): DynamicModule {
     return {
       module: LarkBotModule,
       imports: optionsProvider.imports,
+      controllers: [LarkBotController],
       providers: [
         {
           provide: LARK_OPTIONS,

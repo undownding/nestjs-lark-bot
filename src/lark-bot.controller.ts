@@ -1,4 +1,4 @@
-import {Body, Controller, ForbiddenException, Get, Inject, Post} from '@nestjs/common'
+import {Body, Controller, ForbiddenException, Get, HttpCode, Inject, Post} from '@nestjs/common'
 import {LarkBotService} from './lark-bot.service'
 import {LARK_BOT} from './lark-bot.constants'
 import {BotMessageDto, SessionResponseDto} from './lark-bot.dto'
@@ -17,17 +17,15 @@ export class LarkBotController {
   }
 
   @Post('/callback')
+  @HttpCode(200)
   async handleLarkRequest(@Body() body: BotMessageDto): Promise<unknown> {
+    if (body.challenge) {
+      return {challenge: body.challenge}
+    }
     switch (body.header.event_type) {
       case 'im.message.receive_v1':
         return this.botService.onMessage(body.event)
       default:
     }
-  }
-
-  @Post('/code2session')
-  async code2session(@Body() body: {code: string}): Promise<SessionResponseDto> {
-    return this.botService.getTenantAccessToken()
-      .then((token) => this.botService.code2session(token, body.code))
   }
 }

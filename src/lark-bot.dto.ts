@@ -92,6 +92,8 @@ export class BotMessageDto {
   public event?: BotEventDto
 
   public schema?: string
+
+  public challenge?: string
 }
 
 export type ResourceType = 'image' | 'file'
