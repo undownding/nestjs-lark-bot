@@ -1,25 +1,22 @@
-import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
+import {forwardRef, Inject, Logger} from '@nestjs/common'
 import {HttpService} from '@nestjs/axios'
 import UserResponseDto, {UserIdType} from './user.dto'
-import {BotEventDto, Options, ResourceType} from './lark-bot.dto'
-import {LARK_OPTIONS} from './lark-bot.constants'
+import {BotEventDto, Options, ResourceType, SessionResponseDto, TokenResponse} from './lark-bot.dto'
+import {Domain, LARK_OPTIONS} from './lark-bot.constants'
+import {Method, ResponseType} from 'axios'
 
-interface ITokenResponse {
-  code: number
-  tenant_access_token: string
-}
 
 export abstract class LarkBotService {
   @Inject(forwardRef(() => LARK_OPTIONS))
   readonly options: Options
 
-  private readonly httpService: HttpService
+  protected readonly httpService: HttpService
 
   async getTenantAccessToken(): Promise<string> {
     if (this.options.debug) {
       Logger.log('getTenantAccessToken')
     }
-    const response = await this.httpService.post<ITokenResponse>(
+    const response = await this.httpService.post<TokenResponse>(
       'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/',
       {
         app_id: this.options.appId,
@@ -41,16 +38,10 @@ export abstract class LarkBotService {
     return body.tenant_access_token ?? ''
   }
 
-  async getUser(token: string, id: string, idType: UserIdType = 'open_id'): Promise<UserResponseDto> {
-    return this.httpService.get<UserResponseDto>(
-      `https://open.feishu.cn/open-apis/contact/v3/users/${id}?user_id_type=${idType}`,
-      {
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          'Authorization': `Bearer ${token}`,
-        },
-      },
-    ).toPromise().then((response) => response.data)
+  async getUserById(token: string, id: string, idType: UserIdType = 'open_id'): Promise<UserResponseDto> {
+    return this.apiRequest<UserResponseDto>(
+      `/open-apis/contact/v3/users/${id}?user_id_type=${idType}`, token
+    )
   }
 
   public async getMessageResource(
@@ -59,15 +50,37 @@ export abstract class LarkBotService {
     token: string,
     type: ResourceType
   ): Promise<ArrayBuffer> {
-    return this.httpService.axiosRef({
-      url: `https://open.feishu.cn/open-apis/im/v1/messages/${messageId}/resources/${fileKey}?type=${type}`,
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      responseType: 'arraybuffer',
-    })
-      .then((response) => response.data)
+    return this.apiRequest(
+      `/open-apis/im/v1/messages/${messageId}/resources/${fileKey}?type=${type}`,
+      token, 'GET', undefined, 'arraybuffer'
+    )
+  }
+
+  public async code2session(code: string, token: string): Promise<SessionResponseDto> {
+    return this.apiRequest<SessionResponseDto>(
+      '/open-apis/mina/v2/tokenLoginValidate',
+      token, 'POST', {code}
+    )
+  }
+
+  public async apiRequest<T>(
+    httpPath: string, token: string,
+    httpMethod: Method = 'GET',
+    data?: object, responseType?: ResponseType
+  ): Promise<T> {
+    return this.httpService.request<T>(
+      {
+        baseURL: this.options ? this.options.endpoint || Domain.FeiShu : Domain.FeiShu,
+        url: httpPath,
+        method: httpMethod,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Authorization': `Bearer ${token}`,
+        },
+        responseType,
+        data,
+      }
+    ).toPromise().then((response) => response.data)
   }
 
   abstract onMessage(message: BotEventDto): void

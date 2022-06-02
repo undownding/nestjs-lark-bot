@@ -3,9 +3,34 @@ import {Type} from 'class-transformer'
 
 export class Options {
   debug?: boolean
+  endpoint?: string
   appId: string
   appSecret: string
   appVerificationToken?: string
+}
+
+export abstract class BaseResponse<T> {
+  code: number
+  message: string
+  data?: T
+}
+
+export class SessionData {
+  'open_id': string
+  'employee_id': string
+  'union_id': string
+  'session_key': string
+  'tenant_key': string
+  'access_token': string
+  'expires_in': number
+  'refresh_token': string
+}
+
+export type SessionResponseDto = BaseResponse<SessionData>
+
+export class TokenResponse {
+  code: number
+  tenant_access_token: string
 }
 
 class Header {

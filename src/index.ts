@@ -1,5 +1,14 @@
 export {LarkBotModule} from './lark-bot.module'
 export {LarkBotService} from './lark-bot.service'
-export {Options} from './lark-bot.dto'
-export {LARK_BOT, LARK_OPTIONS} from './lark-bot.constants'
-export * as Dto from './lark-bot.dto'
+export {
+  Options,
+  BotMessageDto,
+  BotEventDto,
+  ResourceType,
+  Mentions,
+  BaseResponse,
+  SessionResponseDto,
+  SessionData,
+  TokenResponse,
+} from './lark-bot.dto'
+export {LARK_BOT, LARK_OPTIONS, Domain} from './lark-bot.constants'
