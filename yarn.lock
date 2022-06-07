@@ -626,7 +626,7 @@
 
 "@nestjs/axios@^0.0.8":
   version "0.0.8"
-  resolved "http://mirrors.cloud.tencent.com/npm/@nestjs%2faxios/-/axios-0.0.8.tgz#4e321e36b6bc3ab0f02d80bafe04ae39edfdcacf"
+  resolved "https://mirrors.cloud.tencent.com/npm/@nestjs%2faxios/-/axios-0.0.8.tgz#4e321e36b6bc3ab0f02d80bafe04ae39edfdcacf"
   integrity sha512-oJyfR9/h9tVk776il0829xyj3b2e81yTu6HjPraxynwNtMNGqZBHHmAQL24yMB3tVbBM0RvG3eUXH8+pRCGwlg==
   dependencies:
     axios "0.27.2"

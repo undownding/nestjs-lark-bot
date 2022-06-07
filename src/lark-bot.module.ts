@@ -3,6 +3,7 @@ import {LarkBotService} from './lark-bot.service'
 import {LARK_BOT, LARK_OPTIONS} from './lark-bot.constants'
 import {Options} from './lark-bot.dto'
 import {LarkBotController} from './lark-bot.controller'
+import { HttpModule } from "@nestjs/axios";
 
 export class OptionsProvider {
   imports?: Array<any>
@@ -16,6 +17,7 @@ export class LarkBotModule {
     return {
       module: LarkBotModule,
       controllers: [LarkBotController],
+      imports: [HttpModule],
       providers: [
         {
           provide: LARK_OPTIONS,
@@ -44,7 +46,7 @@ export class LarkBotModule {
   ): DynamicModule {
     return {
       module: LarkBotModule,
-      imports: optionsProvider.imports,
+      imports: [HttpModule, ...optionsProvider.imports],
       controllers: [LarkBotController],
       providers: [
         {

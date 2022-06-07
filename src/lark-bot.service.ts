@@ -10,6 +10,7 @@ export abstract class LarkBotService {
   @Inject(forwardRef(() => LARK_OPTIONS))
   readonly options: Options
 
+  @Inject(HttpService)
   protected readonly httpService: HttpService
 
   async getTenantAccessToken(): Promise<string> {
