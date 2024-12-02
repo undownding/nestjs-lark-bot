@@ -1,4 +1,4 @@
-import {CacheModule, DynamicModule, Module, Type} from '@nestjs/common'
+import {DynamicModule, Module, Type} from '@nestjs/common'
 import {LarkBotService} from './lark-bot.service'
 import {LARK_BOT, LARK_OPTIONS} from './lark-bot.constants'
 import {Options} from './lark-bot.dto'
